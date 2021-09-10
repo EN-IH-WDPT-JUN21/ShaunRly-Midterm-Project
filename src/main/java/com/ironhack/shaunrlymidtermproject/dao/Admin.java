@@ -1,4 +1,4 @@
-package com.ironhack.springsecurityhandsonclassproject.dao;
+package com.ironhack.shaunrlymidtermproject.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,14 +10,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-public class Recipe {
+public class Admin {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String instructions;
+
+    private String name;
 }
