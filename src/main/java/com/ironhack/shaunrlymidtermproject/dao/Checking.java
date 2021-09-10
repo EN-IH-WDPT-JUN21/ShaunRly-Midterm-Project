@@ -23,4 +23,12 @@ public class Checking extends Account{
         setMonthlyMaintenanceFee(monthlyMaintenanceFee);
         setMinimumBalance(minimumBalance);
     }
+
+    @Override
+    public void paymentOut(BigDecimal amount){
+        getBalance().decreaseAmount(amount);
+        if(getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1){
+            getBalance().decreaseAmount(getPenaltyFee());
+        }
+    }
 }

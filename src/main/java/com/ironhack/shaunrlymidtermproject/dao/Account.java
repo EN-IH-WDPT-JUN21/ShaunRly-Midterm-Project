@@ -56,9 +56,6 @@ public class Account {
 
     public void paymentOut(BigDecimal amount){
         balance.decreaseAmount(amount);
-        if (balance.getAmount().compareTo(penaltyFee) == -1){
-
-        }
     }
 
 }

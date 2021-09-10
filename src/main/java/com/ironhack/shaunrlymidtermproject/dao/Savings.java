@@ -80,4 +80,12 @@ public class Savings extends Account{
         this.setBalance(newBalance);
         return "Received Interest payment of " + interestPayment + ". Balance is now " + newBalance.getAmount();
     }
+
+    @Override
+    public void paymentOut(BigDecimal amount){
+        getBalance().decreaseAmount(amount);
+        if(getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1){
+            getBalance().decreaseAmount(getPenaltyFee());
+        }
+    }
 }

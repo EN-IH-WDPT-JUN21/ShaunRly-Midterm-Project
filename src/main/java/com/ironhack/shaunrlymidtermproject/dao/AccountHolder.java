@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,4 +24,6 @@ public class AccountHolder {
     private LocalDate dateOfBirth;
     private Address primaryAddress;
     private Address mailingAddress;
+
+    private Set<Account> accounts;
 }
