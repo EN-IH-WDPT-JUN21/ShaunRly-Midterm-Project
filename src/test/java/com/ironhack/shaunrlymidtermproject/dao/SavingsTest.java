@@ -44,15 +44,13 @@ class SavingsTest {
     @Test
     void testToString() {
         String testString = savingsRepository.getById(savings1.getId()).toString();
-        System.out.println(testString);
+        assertTrue(testString.contains("10000"));
     }
 
     @Test
-    void paymentOutNoFee() {
+    void paymentOut_NoFee() {
         BigDecimal currBalance = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
         assertEquals(new Money(BigDecimal.valueOf(10000)).getAmount(), currBalance);
-
-        //savingsRepository.getById(savings1.getId()).paymentOut(BigDecimal.valueOf(100));
 
         Savings savingsAcc = savingsRepository.getById(savings1.getId());
         savingsAcc.paymentOut(BigDecimal.valueOf(100));

@@ -24,7 +24,7 @@ public class Savings extends Account{
     @Digits(integer = 3, fraction = 5)
     private BigDecimal interestRate = new BigDecimal("1.0025");
     @Convert(converter = MonetaryAmountConverter.class)
-    private Money minimumBalance = new Money(BigDecimal.valueOf(1000));
+    private Money minimumBalance = new Money(new BigDecimal("1000"));
     private LocalDate dateOfLastInterestPayment;
 
     public Savings(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
@@ -94,12 +94,13 @@ public class Savings extends Account{
         if(getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1){
             getBalance().decreaseAmount(getPenaltyFee());
         }
+        dateCheck();
     }
 
     @Override
     public void paymentIn(BigDecimal amount){
         getBalance().increaseAmount(amount);
-        accrueInterest();
+        dateCheck();
     }
 
     @Override

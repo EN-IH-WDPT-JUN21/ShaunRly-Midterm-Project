@@ -80,4 +80,16 @@ public class CreditCard extends Account{
         this.setBalance(newBalance);
         return "Received Interest payment of " + interestPayment + ". Balance is now " + newBalance.getAmount();
     }
+
+    @Override
+    public void paymentOut(BigDecimal amount){
+        getBalance().decreaseAmount(amount);
+        dateCheck();
+    }
+
+    @Override
+    public void paymentIn(BigDecimal amount){
+        getBalance().increaseAmount(amount);
+        dateCheck();
+    }
 }
