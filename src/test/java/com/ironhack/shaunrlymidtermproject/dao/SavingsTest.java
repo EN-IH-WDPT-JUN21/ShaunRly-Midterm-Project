@@ -29,13 +29,17 @@ class SavingsTest {
     void SetUp(){
         accountHolder1 = new AccountHolder("Scrooge McDuck", LocalDate.of(1956, 10, 24),
                 new Address(1, "McDuck Manor", "Duckburg", "New York", "USA", "DU12 CK3"));
-        //accountHolderRepository.save(accountHolder1);
+        accountHolderRepository.save(accountHolder1);
 
         savings1 = new Savings(new Money(BigDecimal.valueOf(1000)), accountHolder1, null);
-        //savingsRepository.save(savings1);
+        savingsRepository.save(savings1);
     }
 
     @AfterEach
+    void tearDown(){
+        savingsRepository.deleteAll();
+        accountHolderRepository.deleteAll();
+    }
 
     @Test
     void testToString() {

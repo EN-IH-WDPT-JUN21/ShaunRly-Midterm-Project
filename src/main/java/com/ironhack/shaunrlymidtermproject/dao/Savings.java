@@ -1,10 +1,13 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,6 +20,7 @@ import java.time.LocalDate;
 public class Savings extends Account{
 
     private BigDecimal interestRate = BigDecimal.valueOf(0.0025);
+    @Convert(converter = MonetaryAmountConverter.class)
     private Money minimumBalance = new Money(BigDecimal.valueOf(1000));
     private LocalDate dateOfLastInterestPayment;
 

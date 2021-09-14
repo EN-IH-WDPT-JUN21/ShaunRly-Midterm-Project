@@ -27,9 +27,9 @@ public class Account {
     private Money balance;
 
     private final String secretKey = createSecretKey();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private AccountHolder primaryOwner;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private AccountHolder secondaryOwner;
     private BigDecimal penaltyFee = BigDecimal.valueOf(40);
     private LocalDate creationDate = LocalDate.now();
@@ -38,7 +38,11 @@ public class Account {
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
-        this.secondaryOwner = secondaryOwner;
+        if(secondaryOwner == null){
+            this.secondaryOwner = primaryOwner;
+        } else {
+            this.secondaryOwner = secondaryOwner;
+        }
     }
 
     public Money getBalance() {

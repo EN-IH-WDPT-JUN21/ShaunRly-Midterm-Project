@@ -1,5 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.ironhack.shaunrlymidtermproject.utils.AddressConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,9 @@ public class AccountHolder {
 
     private String username;
     private LocalDate dateOfBirth;
+    @Convert(converter = AddressConverter.class)
     private Address primaryAddress;
+    @Convert(converter = AddressConverter.class)
     private Address mailingAddress;
 
     @OneToMany(mappedBy = "primaryOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
