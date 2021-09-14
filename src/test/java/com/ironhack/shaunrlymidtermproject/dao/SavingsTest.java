@@ -31,7 +31,7 @@ class SavingsTest {
                 new Address(1, "McDuck Manor", "Duckburg", "New York", "USA", "DU12 CK3"));
         accountHolderRepository.save(accountHolder1);
 
-        savings1 = new Savings(new Money(BigDecimal.valueOf(1000)), accountHolder1, null);
+        savings1 = new Savings(new Money(BigDecimal.valueOf(10000)), accountHolder1, null);
         savingsRepository.save(savings1);
     }
 
@@ -45,5 +45,75 @@ class SavingsTest {
     void testToString() {
         String testString = savingsRepository.getById(savings1.getId()).toString();
         System.out.println(testString);
+    }
+
+    @Test
+    void paymentOutNoFee() {
+        BigDecimal currBalance = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+        assertEquals(new Money(BigDecimal.valueOf(10000)).getAmount(), currBalance);
+
+        //savingsRepository.getById(savings1.getId()).paymentOut(BigDecimal.valueOf(100));
+
+        Savings savingsAcc = savingsRepository.getById(savings1.getId());
+        savingsAcc.paymentOut(BigDecimal.valueOf(100));
+        savingsRepository.save(savingsAcc);
+
+        BigDecimal currBalance2 = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+
+        assertEquals(new Money(BigDecimal.valueOf(9900)).getAmount(), currBalance2);
+    }
+
+    @Test
+    void paymentOut_FeeApplied(){
+        BigDecimal currBalance = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+        assertEquals(new Money(BigDecimal.valueOf(10000)).getAmount(), currBalance);
+
+        //savingsRepository.getById(savings1.getId()).paymentOut(BigDecimal.valueOf(100));
+
+        Savings savingsAcc = savingsRepository.getById(savings1.getId());
+        savingsAcc.paymentOut(BigDecimal.valueOf(9050));
+        savingsRepository.save(savingsAcc);
+
+        BigDecimal currBalance2 = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+
+        assertEquals(new Money(BigDecimal.valueOf(10000)
+                .subtract(BigDecimal.valueOf(9050))
+                .subtract(savings1.getPenaltyFee())).getAmount(), currBalance2);
+    }
+
+    @Test
+    void paymentIn_NoInterestApplied(){
+        BigDecimal currBalance = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+        assertEquals(new Money(BigDecimal.valueOf(10000)).getAmount(), currBalance);
+
+        Savings savingsAcc = savingsRepository.getById(savings1.getId());
+        savingsAcc.paymentIn(BigDecimal.valueOf(100));
+        savingsRepository.save(savingsAcc);
+
+        BigDecimal currBalance2 = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+
+        assertEquals(new Money(BigDecimal.valueOf(10100)).getAmount(), currBalance2);
+    }
+
+    @Test
+    void paymentIn_InterestApplied(){
+        BigDecimal currBalance = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+        assertEquals(new Money(BigDecimal.valueOf(10000)).getAmount(), currBalance);
+
+        Savings savingsAcc = savingsRepository.getById(savings1.getId());
+        System.out.println(savingsAcc.getInterestRate());
+        savingsAcc.setDateOfLastInterestPayment(LocalDate.now().minusYears(1).minusDays(1));
+        savingsAcc.paymentIn(new BigDecimal("100"));
+        savingsRepository.save(savingsAcc);
+
+        BigDecimal currBalance2 = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
+
+        System.out.println(savingsAcc.getInterestRate());
+        System.out.println(currBalance2);
+
+        assertEquals(new Money(BigDecimal.valueOf(10000)
+                .add(BigDecimal.valueOf(100))
+                .multiply(savings1.getInterestRate())).getAmount(),
+                currBalance2);
     }
 }

@@ -31,7 +31,7 @@ public class Account {
     private AccountHolder primaryOwner;
     @ManyToOne(fetch = FetchType.EAGER)
     private AccountHolder secondaryOwner;
-    private BigDecimal penaltyFee = BigDecimal.valueOf(40);
+    private BigDecimal penaltyFee = new BigDecimal("40");
     private LocalDate creationDate = LocalDate.now();
     private Status status = Status.ACTIVE;
 

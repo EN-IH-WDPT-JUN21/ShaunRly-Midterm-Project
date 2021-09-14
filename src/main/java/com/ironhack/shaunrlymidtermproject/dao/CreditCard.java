@@ -16,8 +16,8 @@ import java.time.LocalDate;
 @Setter
 public class CreditCard extends Account{
 
-    private Money creditLimit = new Money(BigDecimal.valueOf(100));
-    private BigDecimal interestRate = BigDecimal.valueOf(0.2);
+    private Money creditLimit = new Money(new BigDecimal("100"));
+    private BigDecimal interestRate = new BigDecimal("0.2");
     private LocalDate dateOfLastInterestPayment;
 
     public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
@@ -48,11 +48,11 @@ public class CreditCard extends Account{
     }
 
     public void setCreditLimit(Money creditLimit) {
-        this.creditLimit = new Money(creditLimit.getAmount().max(BigDecimal.valueOf(100000)));
+        this.creditLimit = new Money(creditLimit.getAmount().max(new BigDecimal("100000")));
     }
 
     public void setInterestRate(BigDecimal interestRate) {
-        this.interestRate = interestRate.min(BigDecimal.valueOf(0.1));
+        this.interestRate = interestRate.min(new BigDecimal("0.1"));
     }
 
     @Override

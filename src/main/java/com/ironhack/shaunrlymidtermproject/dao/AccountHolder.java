@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Set;
 
 @Entity
@@ -22,7 +21,7 @@ public class AccountHolder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String name;
     private LocalDate dateOfBirth;
     @Convert(converter = AddressConverter.class)
     private Address primaryAddress;
@@ -32,15 +31,15 @@ public class AccountHolder {
     @OneToMany(mappedBy = "primaryOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Account> accounts;
 
-    public AccountHolder(String username, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
-        this.username = username;
+    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
+        this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
         }
 
-    public AccountHolder(String username, LocalDate dateOfBirth, Address primaryAddress) {
-        this.username = username;
+    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress) {
+        this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = primaryAddress;

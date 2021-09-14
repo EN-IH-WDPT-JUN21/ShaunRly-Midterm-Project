@@ -15,13 +15,11 @@ import java.math.BigDecimal;
 @Setter
 public class Checking extends Account{
 
-    private BigDecimal monthlyMaintenanceFee;
-    private Money minimumBalance;
+    private BigDecimal monthlyMaintenanceFee = new BigDecimal("12");
+    private Money minimumBalance = new Money(new BigDecimal("250"));
 
-    public Checking(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, BigDecimal monthlyMaintenanceFee, Money minimumBalance) {
+    public Checking(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         super(balance, primaryOwner, secondaryOwner);
-        setMonthlyMaintenanceFee(monthlyMaintenanceFee);
-        setMinimumBalance(minimumBalance);
     }
 
     @Override

@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -19,7 +20,9 @@ import java.time.LocalDate;
 @Setter
 public class Savings extends Account{
 
-    private BigDecimal interestRate = BigDecimal.valueOf(0.0025);
+    //@Column(precision = 10, scale = 10, columnDefinition = "DECIMAL(10, 10)")
+    @Digits(integer = 3, fraction = 5)
+    private BigDecimal interestRate = new BigDecimal("1.0025");
     @Convert(converter = MonetaryAmountConverter.class)
     private Money minimumBalance = new Money(BigDecimal.valueOf(1000));
     private LocalDate dateOfLastInterestPayment;
@@ -52,11 +55,11 @@ public class Savings extends Account{
     }
 
     public void setInterestRate(BigDecimal interestRate) {
-        this.interestRate = interestRate.max(BigDecimal.valueOf(0.5));
+        this.interestRate = interestRate.max(new BigDecimal("1.5"));
     }
 
     public void setMinimumBalance(Money minimumBalance) {
-        this.minimumBalance = new Money(minimumBalance.getAmount().min(BigDecimal.valueOf(100)));
+        this.minimumBalance = new Money(minimumBalance.getAmount().min(new BigDecimal("100")));
     }
 
     @Override
@@ -79,7 +82,7 @@ public class Savings extends Account{
     }
 
     public String accrueInterest(){
-        Money newBalance = new Money(getBalance().getAmount().multiply(BigDecimal.valueOf(1).add(interestRate)));
+        Money newBalance = new Money(getBalance().getAmount().multiply(interestRate));
         BigDecimal interestPayment = newBalance.getAmount().subtract(this.getBalance().getAmount());
         this.setBalance(newBalance);
         return "Received Interest payment of " + interestPayment + ". Balance is now " + newBalance.getAmount();
@@ -91,6 +94,12 @@ public class Savings extends Account{
         if(getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1){
             getBalance().decreaseAmount(getPenaltyFee());
         }
+    }
+
+    @Override
+    public void paymentIn(BigDecimal amount){
+        getBalance().increaseAmount(amount);
+        accrueInterest();
     }
 
     @Override
