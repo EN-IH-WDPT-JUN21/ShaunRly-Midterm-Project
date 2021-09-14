@@ -1,10 +1,14 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import org.springframework.stereotype.Component;
+
+import javax.persistence.Entity;
+import java.io.Serializable;
 import java.math.RoundingMode;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-public class Money {
+public class Money implements Serializable {
 
     private static final Currency USD = Currency.getInstance("USD");
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_EVEN;

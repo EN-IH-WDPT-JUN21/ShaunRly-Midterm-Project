@@ -1,7 +1,7 @@
 package com.ironhack.shaunrlymidtermproject.security;
 
 import com.ironhack.shaunrlymidtermproject.dao.Role;
-import com.ironhack.shaunrlymidtermproject.dao.AccountHolder;
+import com.ironhack.shaunrlymidtermproject.dao.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,9 +11,9 @@ import java.util.HashSet;
 
 public class CustomUserDetails implements UserDetails {
 
-    private AccountHolder user;
+    private User user;
 
-    public CustomUserDetails(AccountHolder user) {
+    public CustomUserDetails(User user) {
         this.user = user;
     }
 

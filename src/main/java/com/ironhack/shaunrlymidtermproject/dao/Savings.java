@@ -88,4 +88,13 @@ public class Savings extends Account{
             getBalance().decreaseAmount(getPenaltyFee());
         }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "Savings{" +
+                "interestRate=" + interestRate +
+                ", minimumBalance=" + minimumBalance +
+                ", dateOfLastInterestPayment=" + dateOfLastInterestPayment +
+                '}';
+    }
 }

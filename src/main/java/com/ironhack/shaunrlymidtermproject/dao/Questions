@@ -1,2 +1,7 @@
 Should CreditCard have a minimumBalance?
+
 How to test for time sensitive requirments like fraud protection?
+
+Do I need to make Converters for all non-entity custom class properties in tables?
+- Have we done this in class?
+- Why does the error happen with classes of only primitive types

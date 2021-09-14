@@ -16,8 +16,5 @@ import java.time.LocalDate;
 @Setter
 public class StudentChecking extends Account{
 
-    public StudentChecking(Long id, Money balance, String secretKey, AccountHolder primaryOwner,
-                           AccountHolder secondaryOwner, Money penaltyFee, LocalDate creationDate, Status status) {
-        super(balance, primaryOwner, secondaryOwner);
-    }
+    private boolean canUpgrade;
 }

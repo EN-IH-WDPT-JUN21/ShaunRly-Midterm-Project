@@ -1,6 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.service;
 
-import com.ironhack.shaunrlymidtermproject.dao.AccountHolder;
+import com.ironhack.shaunrlymidtermproject.dao.User;
 import com.ironhack.shaunrlymidtermproject.repository.UserRepository;
 import com.ironhack.shaunrlymidtermproject.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<AccountHolder> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
 
         if(!user.isPresent()){
             throw new UsernameNotFoundException("User not found with username " + username);

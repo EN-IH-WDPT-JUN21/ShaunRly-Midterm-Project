@@ -1,15 +1,14 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
 import com.ironhack.shaunrlymidtermproject.enums.Status;
+import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -24,9 +23,13 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Convert(converter = MonetaryAmountConverter.class)
     private Money balance;
+
     private final String secretKey = createSecretKey();
+    @ManyToOne
     private AccountHolder primaryOwner;
+    @ManyToOne
     private AccountHolder secondaryOwner;
     private BigDecimal penaltyFee = BigDecimal.valueOf(40);
     private LocalDate creationDate = LocalDate.now();
@@ -58,4 +61,17 @@ public class Account {
         balance.decreaseAmount(amount);
     }
 
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", balance=" + balance +
+                ", secretKey='" + secretKey + '\'' +
+                ", primaryOwner=" + primaryOwner +
+                ", secondaryOwner=" + secondaryOwner +
+                ", penaltyFee=" + penaltyFee +
+                ", creationDate=" + creationDate +
+                ", status=" + status +
+                '}';
+    }
 }
