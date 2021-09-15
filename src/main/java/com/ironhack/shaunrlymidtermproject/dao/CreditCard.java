@@ -10,55 +10,57 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class CreditCard extends Account{
 
-    private Money creditLimit = new Money(new BigDecimal("100"));
-    private BigDecimal interestRate = new BigDecimal("0.2");
+    private BigDecimal creditLimit = new BigDecimal("100");
+    private BigDecimal interestRate = new BigDecimal("1.2");
     private LocalDate dateOfLastInterestPayment;
 
-    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+    public CreditCard(Money balance,
+                      AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         super(balance, primaryOwner, secondaryOwner);
         setDateOfLastInterestPayment(getCreationDate());
     }
 
-    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner,
-                      Money creditLimit) {
+    public CreditCard(Money balance, BigDecimal creditLimit,
+                      AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         super(balance, primaryOwner, secondaryOwner);
         setCreditLimit(creditLimit);
         setDateOfLastInterestPayment(getCreationDate());
     }
 
-    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner,
-                      BigDecimal interestRate) {
+    public CreditCard(Money balance,
+                      AccountHolder primaryOwner, AccountHolder secondaryOwner, BigDecimal interestRate) {
         super(balance, primaryOwner, secondaryOwner);
         setInterestRate(interestRate);
         setDateOfLastInterestPayment(getCreationDate());
     }
 
-    public CreditCard(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner,
-                      Money creditLimit, BigDecimal interestRate) {
+    public CreditCard(Money balance, BigDecimal creditLimit,
+                      AccountHolder primaryOwner, AccountHolder secondaryOwner, BigDecimal interestRate) {
         super(balance, primaryOwner, secondaryOwner);
         setInterestRate(interestRate);
         setCreditLimit(creditLimit);
         setDateOfLastInterestPayment(getCreationDate());
     }
 
-    public void setCreditLimit(Money creditLimit) {
-        this.creditLimit = new Money(creditLimit.getAmount().max(new BigDecimal("100000")));
+    public void setCreditLimit(BigDecimal creditLimit) {
+        if (creditLimit.compareTo(new BigDecimal("100000")) == 1){
+            this.creditLimit = new BigDecimal("100000");
+        } else {
+            this.creditLimit = creditLimit;
+        }
     }
 
     public void setInterestRate(BigDecimal interestRate) {
-        this.interestRate = interestRate.min(new BigDecimal("0.1"));
-    }
-
-    @Override
-    public void setBalance(Money balance) {
-        dateCheck();
-        super.setBalance(balance);
+        if (interestRate.compareTo(new BigDecimal("1.1")) == -1){
+            this.interestRate = new BigDecimal("1.1");
+        } else {
+            this.interestRate = interestRate;
+        }
     }
 
     @Override
@@ -75,21 +77,26 @@ public class CreditCard extends Account{
     }
 
     public String accrueInterest(){
-        Money newBalance = new Money(getBalance().getAmount().multiply(BigDecimal.valueOf(1).add(interestRate)));
+        Money newBalance = new Money(getBalance().getAmount().multiply(interestRate));
         BigDecimal interestPayment = newBalance.getAmount().subtract(this.getBalance().getAmount());
         this.setBalance(newBalance);
-        return "Received Interest payment of " + interestPayment + ". Balance is now " + newBalance.getAmount();
+        return "Accrued interest of " + interestPayment + " on outstanding Balance. Balance is now " + newBalance.getAmount();
     }
 
-    @Override
-    public void paymentOut(BigDecimal amount){
+    public String creditPayment(BigDecimal amount){
         getBalance().decreaseAmount(amount);
         dateCheck();
+        return "Payment of " + amount + " received. Current Balance is " + getBalance().toString();
     }
 
-    @Override
-    public void paymentIn(BigDecimal amount){
-        getBalance().increaseAmount(amount);
-        dateCheck();
+    public String creditCardPurchase(BigDecimal amount){
+        if (getBalance().getAmount().add(amount).compareTo(creditLimit) != 1) {
+            getBalance().increaseAmount(amount);
+            dateCheck();
+            return creditLimit.subtract(getBalance().getAmount()) + "credit left on card.";
+        } else {
+            return "Credit Limit of " + creditLimit + " reached. Payment declined";
+        }
+
     }
 }
