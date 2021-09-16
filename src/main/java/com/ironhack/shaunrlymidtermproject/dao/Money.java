@@ -1,7 +1,12 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import java.io.Serializable;
 import java.math.RoundingMode;
@@ -37,6 +42,10 @@ public class Money implements Serializable {
      **/
     public Money(BigDecimal amount) {
         this(amount, USD, DEFAULT_ROUNDING);
+    }
+
+    public Money() {
+        this(new BigDecimal("0"), USD, DEFAULT_ROUNDING);
     }
 
     public BigDecimal increaseAmount(Money money) {

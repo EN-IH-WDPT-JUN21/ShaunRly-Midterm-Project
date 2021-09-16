@@ -1,4 +1,4 @@
-package com.ironhack.shaunrlymidtermproject.service;
+package com.ironhack.shaunrlymidtermproject.service.impl;
 
 import com.ironhack.shaunrlymidtermproject.dao.User;
 import com.ironhack.shaunrlymidtermproject.repository.UserRepository;

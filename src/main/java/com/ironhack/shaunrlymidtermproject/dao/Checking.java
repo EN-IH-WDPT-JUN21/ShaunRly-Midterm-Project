@@ -1,5 +1,9 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +24,9 @@ public class Checking extends Account{
     private BigDecimal monthlyMaintenanceFee = new BigDecimal("12");
     @Convert(converter = MonetaryAmountConverter.class)
     private Money minimumBalance = new Money(new BigDecimal("250"));
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("date")
     private LocalDate dateOfLastMaintenancePayment = LocalDate.now();
 
     public Checking(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
