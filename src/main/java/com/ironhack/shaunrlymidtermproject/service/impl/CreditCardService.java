@@ -1,10 +1,10 @@
 package com.ironhack.shaunrlymidtermproject.service.impl;
 
 import com.ironhack.shaunrlymidtermproject.dao.Checking;
-import com.ironhack.shaunrlymidtermproject.repository.AccountHolderRepository;
-import com.ironhack.shaunrlymidtermproject.repository.CheckingRepository;
+import com.ironhack.shaunrlymidtermproject.dao.CreditCard;
+import com.ironhack.shaunrlymidtermproject.repository.CreditCardRepository;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
-import com.ironhack.shaunrlymidtermproject.service.interfaces.ICheckingService;
+import com.ironhack.shaunrlymidtermproject.service.interfaces.ICreditCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,34 +14,34 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CheckingService implements ICheckingService {
+public class CreditCardService implements ICreditCardService {
 
     @Autowired
-    CheckingRepository checkingRepository;
+    CreditCardRepository creditCardRepository;
 
     @Autowired
     IAccountService accountService;
 
-    public void update(Long id, Checking checking){
+    public void update(Long id, CreditCard creditCard){
 
-        Optional<Checking> storedChecking = checkingRepository.findById(id);
-        if (storedChecking.isPresent()){
-            Checking storedSuperUpdated = (Checking) accountService.updateSuper(id, List.of(storedChecking.get(), checking));
-            if(checking.getMonthlyMaintenanceFee() != null){
+        Optional<CreditCard> storedCreditCard = creditCardRepository.findById(id);
+        if (storedCreditCard.isPresent()){
+            CreditCard storedSuperUpdated = (CreditCard) accountService.updateSuper(id, List.of(storedCreditCard.get(), creditCard));
+            if(creditCard.getCreditLimit() != null){
                 try {
-                    storedSuperUpdated.setMonthlyMaintenanceFee(checking.getMonthlyMaintenanceFee());
+                    storedSuperUpdated.setCreditLimit(creditCard.getCreditLimit());
                 } catch (Exception e){
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Monthly Maintenance Fee formatted incorrectly.");
                 }
             }
-            if(checking.getMinimumBalance() != null){
+            if(creditCard.getInterestRate() != null){
                 try {
-                    storedSuperUpdated.setMinimumBalance(checking.getMinimumBalance());
+                    storedSuperUpdated.setInterestRate(creditCard.getInterestRate());
                 } catch (Exception e){
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Minimum Balance formatted incorrectly.");
                 }
             }
-            checkingRepository.save(storedSuperUpdated);
+            creditCardRepository.save(storedSuperUpdated);
         }
         else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "That Checking Account does not exists");

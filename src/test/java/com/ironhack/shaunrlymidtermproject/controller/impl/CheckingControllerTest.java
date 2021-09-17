@@ -68,6 +68,8 @@ class CheckingControllerTest {
         Checking newCheckingAccount = new Checking(new Money(new BigDecimal("1000")), accountHolder1, accountHolder2);
         checkingRepository.save(newCheckingAccount);
 
+        assertFalse(checkingRepository.getById(checking1.getId()).getSecondaryOwner().getName().contains("Huey"));
+
         String body = objectMapper.writeValueAsString(newCheckingAccount);
 
         MvcResult result = mockMvc.perform(
