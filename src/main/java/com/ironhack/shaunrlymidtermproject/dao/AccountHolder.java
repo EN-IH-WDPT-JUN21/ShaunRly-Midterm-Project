@@ -47,7 +47,7 @@ public class AccountHolder {
     private String username;
     private String password;
 
-    @OneToMany(mappedBy = "account_holder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "accountHolder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Role> roles;
 
     public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
@@ -69,6 +69,8 @@ public class AccountHolder {
                          Address primaryAddress, Address mailingAddress) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
+        this.username = username;
+        this.password = password;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
     }
@@ -78,6 +80,8 @@ public class AccountHolder {
                          Address primaryAddress) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
+        this.username = username;
+        this.password = password;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = primaryAddress;
     }

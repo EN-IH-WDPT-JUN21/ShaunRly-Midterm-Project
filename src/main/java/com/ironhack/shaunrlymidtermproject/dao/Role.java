@@ -20,6 +20,6 @@ public class Role {
     private String roleName;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "accountHolder_id")
+    private AccountHolder accountHolder;
 }

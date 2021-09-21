@@ -22,12 +22,12 @@ public class User {
     private String username;
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Role> roles;
+    //@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    //private Set<Role> roles;
 
     public User(String username, String password, Set<Role> roles) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        //this.roles = roles;
     }
 }
