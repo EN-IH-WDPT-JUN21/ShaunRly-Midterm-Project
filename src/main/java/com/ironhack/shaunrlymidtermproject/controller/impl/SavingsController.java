@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class SavingsController implements ISavingsController {
@@ -20,10 +21,34 @@ public class SavingsController implements ISavingsController {
     @Autowired
     ISavingsService savingsService;
 
-    @PutMapping("/savings/{id}")
+    @PostMapping("/savings/new")
+    @ResponseStatus(HttpStatus.OK)
+    public void newCreditCard(@RequestBody @Valid Savings savings){
+        savingsRepository.save(savings);
+    }
+
+    @PutMapping("/savings/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void update(@PathVariable(name = "id") Long id, @RequestBody @Valid Savings savings){
         savingsService.update(id, savings);
+    }
+
+    @GetMapping("/savings/admin/getall")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Savings> getAllSavingsAccounts(){
+        return savingsRepository.findAll();
+    }
+
+    @GetMapping("/savings/account/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Savings getById(@PathVariable(name = "id") Long id){
+        return savingsRepository.findById(id).orElse(null);
+    }
+
+    @DeleteMapping("/savings/admin/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteById(@PathVariable(name = "id") Long id){
+        savingsRepository.deleteById(id);
     }
 
 }

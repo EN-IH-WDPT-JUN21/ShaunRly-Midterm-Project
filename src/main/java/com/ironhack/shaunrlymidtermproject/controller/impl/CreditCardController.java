@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class CreditCardController implements ICreditCardController {
@@ -20,9 +21,33 @@ public class CreditCardController implements ICreditCardController {
     @Autowired
     ICreditCardService creditCardService;
 
-    @PutMapping("/creditcard/{id}")
+    @PostMapping("/credit/new")
+    @ResponseStatus(HttpStatus.OK)
+    public void newCreditCard(@RequestBody @Valid CreditCard creditCard){
+        creditCardRepository.save(creditCard);
+    }
+
+    @PutMapping("/credit/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void update(@PathVariable(name = "id") Long id, @RequestBody @Valid CreditCard creditCard){
         creditCardService.update(id, creditCard);
+    }
+
+    @GetMapping("/credit/admin/getall")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CreditCard> getAllCreditCards(){
+        return creditCardRepository.findAll();
+    }
+
+    @GetMapping("/credit/account/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public CreditCard getById(@PathVariable(name = "id") Long id){
+        return creditCardRepository.findById(id).orElse(null);
+    }
+
+    @DeleteMapping("/credit/admin/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteById(@PathVariable(name = "id") Long id){
+        creditCardRepository.deleteById(id);
     }
 }

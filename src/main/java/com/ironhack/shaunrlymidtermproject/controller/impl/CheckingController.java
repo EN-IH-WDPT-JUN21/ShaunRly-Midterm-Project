@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class CheckingController implements ICheckingController {
@@ -19,9 +20,33 @@ public class CheckingController implements ICheckingController {
     @Autowired
     ICheckingService checkingService;
 
-    @PutMapping("/checking/{id}")
+    @PostMapping("/checking/new")
+    @ResponseStatus(HttpStatus.OK)
+    public void newCheckingAccount(@RequestBody @Valid Checking checking){
+        checkingRepository.save(checking);
+    }
+
+    @PutMapping("/checking/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void update(@PathVariable(name = "id") Long id, @RequestBody @Valid Checking checking){
         checkingService.update(id, checking);
+    }
+
+    @GetMapping("/checking/admin/getall")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Checking> getAllCheckingAccounts(){
+        return checkingRepository.findAll();
+    }
+
+    @GetMapping("/checking/account/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Checking getById(@PathVariable(name = "id") Long id){
+        return checkingRepository.findById(id).orElse(null);
+    }
+
+    @DeleteMapping("/checking/admin/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteById(@PathVariable(name = "id") Long id){
+        checkingRepository.deleteById(id);
     }
 }
