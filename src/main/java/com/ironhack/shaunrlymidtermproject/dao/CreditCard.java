@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @Setter
 public class CreditCard extends Account{
 
+
+
     private BigDecimal creditLimit = new BigDecimal("100");
     private BigDecimal interestRate = new BigDecimal("1.2");
     private LocalDate dateOfLastInterestPayment;

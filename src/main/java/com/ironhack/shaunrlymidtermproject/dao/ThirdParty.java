@@ -23,4 +23,5 @@ public class ThirdParty {
 
     private String hashedKey;
     private String name;
+    private Money balance;
 }

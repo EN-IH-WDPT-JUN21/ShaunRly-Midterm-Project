@@ -17,12 +17,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 
-@Entity
+@MappedSuperclass
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Account {
+public abstract class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,9 +32,9 @@ public class Account {
     private Money balance;
 
     private String secretKey = createSecretKey();
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private AccountHolder primaryOwner;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private AccountHolder secondaryOwner;
     private BigDecimal penaltyFee = new BigDecimal("40");
     @JsonSerialize(using = LocalDateSerializer.class)

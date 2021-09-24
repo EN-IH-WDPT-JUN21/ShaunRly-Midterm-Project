@@ -21,6 +21,7 @@ import java.time.LocalDate;
 @Setter
 public class Checking extends Account{
 
+
     private BigDecimal monthlyMaintenanceFee = new BigDecimal("12");
     @Convert(converter = MonetaryAmountConverter.class)
     private Money minimumBalance = new Money(new BigDecimal("250"));

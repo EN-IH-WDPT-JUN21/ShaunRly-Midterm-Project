@@ -1,6 +1,7 @@
 package com.ironhack.shaunrlymidtermproject.controller.impl;
 
 import com.ironhack.shaunrlymidtermproject.controller.interfaces.ISavingsController;
+import com.ironhack.shaunrlymidtermproject.dao.Checking;
 import com.ironhack.shaunrlymidtermproject.dao.CreditCard;
 import com.ironhack.shaunrlymidtermproject.dao.Savings;
 import com.ironhack.shaunrlymidtermproject.repository.SavingsRepository;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -41,8 +43,12 @@ public class SavingsController implements ISavingsController {
 
     @GetMapping("/savings/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Savings getById(@PathVariable(name = "id") Long id){
-        return savingsRepository.findById(id).orElse(null);
+    public Savings getById(@PathVariable(name = "id") Long id, Principal principal){
+        if (savingsRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+            return savingsRepository.findById(id).orElse(null);
+        } else {
+            return null;
+        }
     }
 
     @DeleteMapping("/savings/admin/{id}")

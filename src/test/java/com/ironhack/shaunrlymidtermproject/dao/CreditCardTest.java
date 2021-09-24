@@ -27,7 +27,7 @@ class CreditCardTest {
     @BeforeEach
     void SetUp(){
         accountHolder1 = new AccountHolder("Scrooge McDuck", LocalDate.of(1956, 10, 24),
-                new Address(1, "McDuck Manor", "Duckburg", "New York", "USA", "DU12 CK3"));
+                new Address(1, "McDuck Manor", "Duckburg", "New York", "USA", "DU12 CK3"), "user");
         accountHolderRepository.save(accountHolder1);
 
         creditCard1 = new CreditCard(new Money(BigDecimal.valueOf(50)), new BigDecimal("100"),

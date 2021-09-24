@@ -7,6 +7,7 @@ import com.ironhack.shaunrlymidtermproject.service.interfaces.ICheckingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -40,8 +41,12 @@ public class CheckingController implements ICheckingController {
 
     @GetMapping("/checking/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Checking getById(@PathVariable(name = "id") Long id){
-        return checkingRepository.findById(id).orElse(null);
+    public Checking getById(@PathVariable(name = "id") Long id, Principal principal){
+        if (checkingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+            return checkingRepository.findById(id).orElse(null);
+        } else {
+            return null;
+        }
     }
 
     @DeleteMapping("/checking/admin/{id}")

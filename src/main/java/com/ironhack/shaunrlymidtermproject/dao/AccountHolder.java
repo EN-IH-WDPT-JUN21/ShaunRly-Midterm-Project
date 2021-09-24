@@ -41,21 +41,39 @@ public class AccountHolder {
     @Convert(converter = AddressConverter.class)
     private Address mailingAddress;
 
-    @OneToMany(mappedBy = "primaryOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Account> accounts;
+//    @OneToMany(mappedBy = "primaryOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    private Set<Account> accounts;
+
+    private String username;
 
     public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
-        }
+    }
 
     public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = primaryAddress;
+    }
+
+    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress, String username) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.primaryAddress = primaryAddress;
+        this.mailingAddress = mailingAddress;
+        this.username = username;
+        }
+
+    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, String username) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.primaryAddress = primaryAddress;
+        this.mailingAddress = primaryAddress;
+        this.username = username;
     }
 
     public LocalDate getDateOfBirth() {

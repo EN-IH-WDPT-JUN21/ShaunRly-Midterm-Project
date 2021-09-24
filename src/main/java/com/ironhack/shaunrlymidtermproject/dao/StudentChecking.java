@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @Setter
 public class StudentChecking extends Account{
 
+
+
     private boolean canUpgrade = false;
 
     public StudentChecking(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {

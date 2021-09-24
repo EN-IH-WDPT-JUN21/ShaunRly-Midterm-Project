@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -41,8 +42,12 @@ public class CreditCardController implements ICreditCardController {
 
     @GetMapping("/credit/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CreditCard getById(@PathVariable(name = "id") Long id){
-        return creditCardRepository.findById(id).orElse(null);
+    public CreditCard getById(@PathVariable(name = "id") Long id, Principal principal){
+        if (creditCardRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+            return creditCardRepository.findById(id).orElse(null);
+        } else {
+            return null;
+        }
     }
 
     @DeleteMapping("/credit/admin/{id}")

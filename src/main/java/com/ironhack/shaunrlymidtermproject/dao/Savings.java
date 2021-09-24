@@ -20,6 +20,7 @@ import java.time.LocalDate;
 @Setter
 public class Savings extends Account{
 
+
     //@Column(precision = 10, scale = 10, columnDefinition = "DECIMAL(10, 10)")
     @Digits(integer = 3, fraction = 5)
     private BigDecimal interestRate = new BigDecimal("1.0025");

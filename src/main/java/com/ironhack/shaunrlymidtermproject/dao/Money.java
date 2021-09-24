@@ -48,6 +48,11 @@ public class Money implements Serializable {
         this(new BigDecimal("0"), USD, DEFAULT_ROUNDING);
     }
 
+    public Money(String amount){
+        this.amount = new BigDecimal(amount);
+        this.currency = USD;
+    }
+
     public BigDecimal increaseAmount(Money money) {
         setAmount(this.amount.add(money.amount));
         return this.amount;
