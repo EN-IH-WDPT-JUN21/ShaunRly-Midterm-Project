@@ -42,7 +42,7 @@ public class StudentCheckingController implements IStudentCheckingController {
         return studentCheckingRepository.findAll();
     }
 
-    @GetMapping("/checking/account/{id}")
+    @GetMapping("/student/account/{id}")
     @ResponseStatus(HttpStatus.OK)
     public StudentChecking getById(@PathVariable(name = "id") Long id, Principal principal){
         if (studentCheckingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
