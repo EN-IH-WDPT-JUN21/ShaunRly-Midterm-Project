@@ -4,12 +4,14 @@ import com.ironhack.shaunrlymidtermproject.controller.interfaces.ICreditCardCont
 import com.ironhack.shaunrlymidtermproject.dao.Checking;
 import com.ironhack.shaunrlymidtermproject.dao.CreditCard;
 import com.ironhack.shaunrlymidtermproject.repository.CreditCardRepository;
+import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.ICreditCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class CreditCardController implements ICreditCardController {
 
     @Autowired
     ICreditCardService creditCardService;
+
+    @Autowired
+    IAccountService accountService;
 
     @PostMapping("/credit/new")
     @ResponseStatus(HttpStatus.OK)
@@ -54,5 +59,16 @@ public class CreditCardController implements ICreditCardController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable(name = "id") Long id){
         creditCardRepository.deleteById(id);
+    }
+
+    @PatchMapping("/credit/account/transfer/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public String getById(@PathVariable(name = "id") Long id, Principal principal,
+                          @RequestBody BigDecimal transferAmount, @RequestBody Long targetId, @RequestBody String name){
+        if (creditCardRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+            return accountService.moneyTransfer(creditCardRepository.findById(id).get(), transferAmount, targetId, name);
+        } else {
+            return null;
+        }
     }
 }

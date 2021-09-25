@@ -1,5 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.ironhack.shaunrlymidtermproject.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -86,19 +87,28 @@ public class CreditCard extends Account{
     }
 
     public String creditPayment(BigDecimal amount){
-        getBalance().decreaseAmount(amount);
-        dateCheck();
-        return "Payment of " + amount + " received. Current Balance is " + getBalance().toString();
+        String fraudMessage = fraudDetection(amount);
+        if (getStatus() != Status.FROZEN) {
+            getBalance().decreaseAmount(amount);
+            fraudDetection(amount);
+            dateCheck();
+            return "Payment of " + amount + " received. Current Balance is " + getBalance().toString();
+        }
+        return fraudMessage;
     }
 
-    public String creditCardPurchase(BigDecimal amount){
-        if (getBalance().getAmount().add(amount).compareTo(creditLimit) != 1) {
-            getBalance().increaseAmount(amount);
-            dateCheck();
-            return creditLimit.subtract(getBalance().getAmount()) + "credit left on card.";
-        } else {
-            return "Credit Limit of " + creditLimit + " reached. Payment declined";
+    public String creditCardPurchase(BigDecimal amount) {
+        String fraudMessage = fraudDetection(amount);
+        if (getStatus() != Status.FROZEN) {
+            if (getBalance().getAmount().add(amount).compareTo(creditLimit) != 1) {
+                getBalance().increaseAmount(amount);
+                fraudDetection(amount);
+                dateCheck();
+                return creditLimit.subtract(getBalance().getAmount()) + "credit left on card.";
+            } else {
+                return "Credit Limit of " + creditLimit + " reached. Payment declined";
+            }
         }
-
+        return fraudMessage;
     }
 }

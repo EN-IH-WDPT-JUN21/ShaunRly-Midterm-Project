@@ -6,12 +6,14 @@ import com.ironhack.shaunrlymidtermproject.dao.CreditCard;
 import com.ironhack.shaunrlymidtermproject.dao.Savings;
 import com.ironhack.shaunrlymidtermproject.dao.StudentChecking;
 import com.ironhack.shaunrlymidtermproject.repository.StudentCheckingRepository;
+import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IStudentCheckingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class StudentCheckingController implements IStudentCheckingController {
 
     @Autowired
     IStudentCheckingService studentCheckingService;
+
+    @Autowired
+    IAccountService accountService;
 
     @PostMapping("/student/new")
     @ResponseStatus(HttpStatus.OK)
@@ -56,6 +61,17 @@ public class StudentCheckingController implements IStudentCheckingController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable(name = "id") Long id){
         studentCheckingRepository.deleteById(id);
+    }
+
+    @PatchMapping("/student/account/transfer/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public String getById(@PathVariable(name = "id") Long id, Principal principal,
+                          @RequestBody BigDecimal transferAmount, @RequestBody Long targetId, @RequestBody String name){
+        if (studentCheckingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+            return accountService.moneyTransfer(studentCheckingRepository.findById(id).get(), transferAmount, targetId, name);
+        } else {
+            return null;
+        }
     }
 
 }

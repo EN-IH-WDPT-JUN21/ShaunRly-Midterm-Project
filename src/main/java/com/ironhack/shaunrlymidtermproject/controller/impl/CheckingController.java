@@ -3,10 +3,13 @@ package com.ironhack.shaunrlymidtermproject.controller.impl;
 import com.ironhack.shaunrlymidtermproject.controller.interfaces.ICheckingController;
 import com.ironhack.shaunrlymidtermproject.dao.Checking;
 import com.ironhack.shaunrlymidtermproject.repository.CheckingRepository;
+import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.ICheckingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 import java.security.Principal;
 
 import javax.validation.Valid;
@@ -20,6 +23,9 @@ public class CheckingController implements ICheckingController {
 
     @Autowired
     ICheckingService checkingService;
+
+    @Autowired
+    IAccountService accountService;
 
     @PostMapping("/checking/new")
     @ResponseStatus(HttpStatus.OK)
@@ -53,5 +59,16 @@ public class CheckingController implements ICheckingController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteById(@PathVariable(name = "id") Long id){
         checkingRepository.deleteById(id);
+    }
+
+    @PatchMapping("/checking/account/transfer/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public String getById(@PathVariable(name = "id") Long id, Principal principal,
+                          @RequestBody BigDecimal transferAmount, @RequestBody Long targetId, @RequestBody String name){
+        if (checkingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+            return accountService.moneyTransfer(checkingRepository.findById(id).get(), transferAmount, targetId, name);
+        } else {
+            return null;
+        }
     }
 }

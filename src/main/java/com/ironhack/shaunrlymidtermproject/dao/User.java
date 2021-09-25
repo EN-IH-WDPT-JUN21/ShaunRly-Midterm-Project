@@ -30,4 +30,10 @@ public class User {
         this.password = password;
         this.roles = roles;
     }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.roles = Set.of(new Role("USER", this));
+    }
 }

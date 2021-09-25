@@ -8,12 +8,15 @@ import com.ironhack.shaunrlymidtermproject.repository.SavingsRepository;
 import com.ironhack.shaunrlymidtermproject.repository.StudentCheckingRepository;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AccountService implements IAccountService {
@@ -23,6 +26,10 @@ public class AccountService implements IAccountService {
     CreditCardRepository creditCardRepository;
     SavingsRepository savingsRepository;
     StudentCheckingRepository studentCheckingRepository;
+
+    private Set<? extends JpaRepository> repositoryList = Set.of(
+            creditCardRepository, studentCheckingRepository,
+            checkingRepository, savingsRepository);
 
     public Account updateSuper(Long id, List<? extends Account> accounts){
         if (accounts.get(1).getBalance() != null){
@@ -54,5 +61,24 @@ public class AccountService implements IAccountService {
             }
         }
         return accounts.get(0);
+    }
+
+    public String moneyTransfer(Account fromAccount, BigDecimal transferAmount, Long targetAccountId, String targetName){
+        if(fromAccount.getBalance().getAmount().compareTo(transferAmount) == -1){
+            return "Balance of account below amount requested to transfer";
+        }
+        Optional<? extends Account> targetAccount = checkingRepository.findById(targetAccountId);
+        targetAccount = studentCheckingRepository.findById(targetAccountId);
+        targetAccount = savingsRepository.findById(targetAccountId);
+        targetAccount = checkingRepository.findById(targetAccountId);
+
+        if(targetAccount.isEmpty()
+                || !targetAccount.get().getPrimaryOwner().getName().equals(targetName)
+                || !targetAccount.get().getSecondaryOwner().getName().equals(targetName)){
+            return "That account couldn't be found.";
+        }
+        fromAccount.paymentOut(transferAmount);
+        targetAccount.get().paymentIn(transferAmount);
+        return "Transfer Successful";
     }
 }

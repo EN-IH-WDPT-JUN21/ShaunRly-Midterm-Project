@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.ironhack.shaunrlymidtermproject.enums.Status;
 import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,15 +51,19 @@ public class Checking extends Account{
     public void paymentIn(BigDecimal amount) {
         super.paymentIn(amount);
         dateCheck();
+
     }
 
     @Override
     public void paymentOut(BigDecimal amount){
-        getBalance().decreaseAmount(amount);
-        if(getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1){
-            getBalance().decreaseAmount(getPenaltyFee());
+        fraudDetection(amount);
+        if (getStatus() != Status.FROZEN) {
+            getBalance().decreaseAmount(amount);
+            if (getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1) {
+                getBalance().decreaseAmount(getPenaltyFee());
+            }
+            dateCheck();
         }
-        dateCheck();
     }
 
     public void dateCheck(){

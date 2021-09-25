@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Entity
 @AllArgsConstructor
@@ -24,4 +25,12 @@ public class ThirdParty {
     private String hashedKey;
     private String name;
     private Money balance;
+
+    public void paymentIn(BigDecimal amount) {
+        getBalance().increaseAmount(amount);
+    }
+
+    public void paymentOut(BigDecimal amount){
+        getBalance().decreaseAmount(amount);
+    }
 }

@@ -15,6 +15,7 @@
 //import java.security.Principal;
 //import java.util.ArrayList;
 //import java.util.List;
+//import java.util.Set;
 //
 //@RestController
 //public class AccountsController {
@@ -25,7 +26,7 @@
 //    SavingsRepository savingsRepository;
 //    StudentCheckingRepository studentCheckingRepository;
 //
-//    private List<? extends JpaRepository> repositoryList = List.of(
+//    private Set<? extends JpaRepository> repositoryList = Set.of(
 //            creditCardRepository, studentCheckingRepository,
 //            checkingRepository, savingsRepository);
 //
@@ -33,8 +34,8 @@
 //    @ResponseStatus(HttpStatus.OK)
 //    public List<? extends Account> getAllUserAccounts(Principal principal){
 //        List<Account> returnedAccounts = new ArrayList<>();
-//        for (JpaRepository respository : repositoryList){
-//            List<? extends Account> accountList = respository.findAll();
+//        for (JpaRepository repository : repositoryList){
+//            List accountList = repository.findAll();
 //            for (Account account : accountList){
 //                if(account.getPrimaryOwner().getUsername().equals(principal.getName())
 //                        || account.getSecondaryOwner().getUsername().equals(principal.getName())){

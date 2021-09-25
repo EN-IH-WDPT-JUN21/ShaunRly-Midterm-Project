@@ -1,5 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.ironhack.shaunrlymidtermproject.enums.Status;
 import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,11 +23,11 @@ public class Savings extends Account{
 
 
     //@Column(precision = 10, scale = 10, columnDefinition = "DECIMAL(10, 10)")
-    @Digits(integer = 3, fraction = 5)
+    @Digits(integer = 10, fraction = 5)
     private BigDecimal interestRate = new BigDecimal("1.0025");
     @Convert(converter = MonetaryAmountConverter.class)
     private Money minimumBalance = new Money(new BigDecimal("1000"));
-    private LocalDate dateOfLastInterestPayment;
+    private LocalDate dateOfLastInterestPayment = LocalDate.now();
 
     public Savings(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         super(balance, primaryOwner, secondaryOwner);
@@ -91,17 +92,25 @@ public class Savings extends Account{
 
     @Override
     public void paymentOut(BigDecimal amount){
-        getBalance().decreaseAmount(amount);
-        if(getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1){
-            getBalance().decreaseAmount(getPenaltyFee());
+        fraudDetection(amount);
+        if (getStatus() != Status.FROZEN) {
+            getBalance().decreaseAmount(amount);
+            if (getBalance().getAmount().compareTo(minimumBalance.getAmount()) == -1) {
+                getBalance().decreaseAmount(getPenaltyFee());
+            }
+            fraudDetection(amount);
+            dateCheck();
         }
-        dateCheck();
     }
 
     @Override
     public void paymentIn(BigDecimal amount){
-        getBalance().increaseAmount(amount);
-        dateCheck();
+        fraudDetection(amount);
+        if (getStatus() != Status.FROZEN) {
+            getBalance().increaseAmount(amount);
+            fraudDetection(amount);
+            dateCheck();
+        }
     }
 
     @Override

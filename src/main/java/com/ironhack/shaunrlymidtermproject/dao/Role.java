@@ -23,4 +23,9 @@ public class Role {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Role(String roleName, User user) {
+        this.roleName = roleName;
+        this.user = user;
+    }
 }
