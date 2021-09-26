@@ -57,7 +57,7 @@ public class ThirdPartyController {
         thirdPartyRepository.deleteById(id);
     }
 
-    @PatchMapping("/checking/account/transfer/{id}")
+    @PatchMapping("/thirdparty/account/transfer/{id}")
     @ResponseStatus(HttpStatus.OK)
     public String getById(@PathVariable(name = "id") Long id, Principal principal,
                           @RequestBody String hashedKey, @RequestBody BigDecimal transferAmount,

@@ -1,7 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.service.impl;
 
-import com.ironhack.shaunrlymidtermproject.dao.Account;
-import com.ironhack.shaunrlymidtermproject.dao.AccountHolder;
+import com.ironhack.shaunrlymidtermproject.dao.*;
 import com.ironhack.shaunrlymidtermproject.repository.CheckingRepository;
 import com.ironhack.shaunrlymidtermproject.repository.CreditCardRepository;
 import com.ironhack.shaunrlymidtermproject.repository.SavingsRepository;
@@ -23,13 +22,16 @@ public class AccountService implements IAccountService {
 
     @Autowired
     CheckingRepository checkingRepository;
+    @Autowired
     CreditCardRepository creditCardRepository;
+    @Autowired
     SavingsRepository savingsRepository;
+    @Autowired
     StudentCheckingRepository studentCheckingRepository;
 
-    private Set<? extends JpaRepository> repositoryList = Set.of(
-            creditCardRepository, studentCheckingRepository,
-            checkingRepository, savingsRepository);
+//    private Set<? extends JpaRepository> repositoryList = Set.of(
+//            creditCardRepository, studentCheckingRepository,
+//            checkingRepository, savingsRepository);
 
     public Account updateSuper(Long id, List<? extends Account> accounts){
         if (accounts.get(1).getBalance() != null){

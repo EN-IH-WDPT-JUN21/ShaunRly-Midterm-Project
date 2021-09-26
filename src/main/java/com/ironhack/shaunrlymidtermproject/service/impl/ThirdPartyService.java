@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class ThirdPartyService implements IThirdPartyService {
@@ -23,13 +22,12 @@ public class ThirdPartyService implements IThirdPartyService {
 
     @Autowired
     CheckingRepository checkingRepository;
+    @Autowired
     CreditCardRepository creditCardRepository;
+    @Autowired
     SavingsRepository savingsRepository;
+    @Autowired
     StudentCheckingRepository studentCheckingRepository;
-
-    private Set<? extends JpaRepository> repositoryList = Set.of(
-            creditCardRepository, studentCheckingRepository,
-            checkingRepository, savingsRepository);
 
     @Override
     public void update(Long id, ThirdParty thirdParty) throws Exception{
