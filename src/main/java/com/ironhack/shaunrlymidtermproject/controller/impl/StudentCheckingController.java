@@ -1,5 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.controller.impl;
 
+import com.ironhack.shaunrlymidtermproject.controller.DTO.TransferDTO;
 import com.ironhack.shaunrlymidtermproject.controller.interfaces.IStudentCheckingController;
 import com.ironhack.shaunrlymidtermproject.dao.Checking;
 import com.ironhack.shaunrlymidtermproject.dao.CreditCard;
@@ -10,6 +11,8 @@ import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IStudentCheckingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -65,10 +68,15 @@ public class StudentCheckingController implements IStudentCheckingController {
 
     @PatchMapping("/student/account/transfer/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String getById(@PathVariable(name = "id") Long id, Principal principal,
-                          @RequestBody BigDecimal transferAmount, @RequestBody Long targetId, @RequestBody String name){
-        if (studentCheckingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
-            return accountService.moneyTransfer(studentCheckingRepository.findById(id).get(), transferAmount, targetId, name);
+    public StudentChecking transfer(@PathVariable(name = "id") Long id,
+                             @RequestBody @Valid TransferDTO transferDTO){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (studentCheckingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(userDetails.getUsername())) {
+            StudentChecking updatedTarget = (StudentChecking) accountService.moneyTransfer(studentCheckingRepository.findById(id).get(),
+                    transferDTO.getTransferAmount(), transferDTO.getTargetId(), transferDTO.getTargetName());
+            studentCheckingRepository.save(updatedTarget);
+            return updatedTarget;
         } else {
             return null;
         }

@@ -1,5 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.controller.impl;
 
+import com.ironhack.shaunrlymidtermproject.controller.DTO.TransferDTO;
 import com.ironhack.shaunrlymidtermproject.controller.interfaces.ICheckingController;
 import com.ironhack.shaunrlymidtermproject.dao.Checking;
 import com.ironhack.shaunrlymidtermproject.repository.CheckingRepository;
@@ -7,6 +8,8 @@ import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.ICheckingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -14,6 +17,7 @@ import java.security.Principal;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CheckingController implements ICheckingController {
@@ -47,8 +51,10 @@ public class CheckingController implements ICheckingController {
 
     @GetMapping("/checking/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Checking getById(@PathVariable(name = "id") Long id, Principal principal){
-        if (checkingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+    public Checking getById(@PathVariable(name = "id") Long id){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (checkingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(userDetails.getUsername())) {
             return checkingRepository.findById(id).orElse(null);
         } else {
             return null;
@@ -63,10 +69,15 @@ public class CheckingController implements ICheckingController {
 
     @PatchMapping("/checking/account/transfer/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String getById(@PathVariable(name = "id") Long id, Principal principal,
-                          @RequestBody BigDecimal transferAmount, @RequestBody Long targetId, @RequestBody String name){
-        if (checkingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
-            return accountService.moneyTransfer(checkingRepository.findById(id).get(), transferAmount, targetId, name);
+    public Checking transfer(@PathVariable(name = "id") Long id,
+                             @RequestBody @Valid TransferDTO transferDTO){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (checkingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(userDetails.getUsername())) {
+            Checking updatedTarget = (Checking) accountService.moneyTransfer(checkingRepository.findById(id).get(),
+                    transferDTO.getTransferAmount(), transferDTO.getTargetId(), transferDTO.getTargetName());
+            checkingRepository.save(updatedTarget);
+            return updatedTarget;
         } else {
             return null;
         }

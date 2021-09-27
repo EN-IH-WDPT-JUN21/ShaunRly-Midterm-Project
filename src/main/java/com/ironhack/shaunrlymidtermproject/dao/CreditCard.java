@@ -1,5 +1,9 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ironhack.shaunrlymidtermproject.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
 @Getter
 @Setter
@@ -20,6 +27,9 @@ public class CreditCard extends Account{
 
     private BigDecimal creditLimit = new BigDecimal("100");
     private BigDecimal interestRate = new BigDecimal("1.2");
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("date_of_last_interest_payment")
     private LocalDate dateOfLastInterestPayment;
 
     public CreditCard(Money balance,
@@ -84,6 +94,16 @@ public class CreditCard extends Account{
         BigDecimal interestPayment = newBalance.getAmount().subtract(this.getBalance().getAmount());
         this.setBalance(newBalance);
         return "Accrued interest of " + interestPayment + " on outstanding Balance. Balance is now " + newBalance.getAmount();
+    }
+
+    @Override
+    public void paymentIn(BigDecimal amount) {
+        creditPayment(amount);
+    }
+
+    @Override
+    public void paymentOut(BigDecimal amount){
+        creditCardPurchase(amount);
     }
 
     public String creditPayment(BigDecimal amount){

@@ -18,8 +18,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Random;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -27,28 +29,28 @@ import java.time.Period;
 public abstract class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     @Convert(converter = MonetaryAmountConverter.class)
     private Money balance;
 
-    private String secretKey = createSecretKey();
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private String secretKey = secretKeyGen();
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private AccountHolder primaryOwner;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private AccountHolder secondaryOwner;
     private BigDecimal penaltyFee = new BigDecimal("40");
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @JsonProperty("date")
+    @JsonProperty("creation_date")
     private LocalDate creationDate = LocalDate.now();
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
-    @JsonProperty("date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonProperty("last_transaction_date_time")
     private LocalDateTime lastTransactionDate = LocalDateTime.now();
-    private BigDecimal currentDayTransactionTotal;
-    private BigDecimal highestDailyTotal = new BigDecimal("500");
+    private BigDecimal currentDayTransactionTotal = new BigDecimal("0");
+    private BigDecimal highestDailyTotal = new BigDecimal("10000");
     private Status status = Status.ACTIVE;
 
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
@@ -61,16 +63,35 @@ public abstract class Account {
         }
     }
 
+    private String secretKeyGen(){
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 6;
+        Random random = new Random();
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
+        return generatedString;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public LocalDateTime getLastTransactionDate() {
+        return lastTransactionDate;
+    }
+
     public Money getBalance() {
         return balance;
     }
 
     public void setBalance(Money balance) {
         this.balance = balance;
-    }
-
-    private String createSecretKey(){
-        return "Placeholder";
     }
 
     public void paymentIn(BigDecimal amount){

@@ -1,6 +1,8 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -41,8 +43,9 @@ public class AccountHolder {
     @Convert(converter = AddressConverter.class)
     private Address mailingAddress;
 
-//    @OneToMany(mappedBy = "primaryOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private Set<Account> accounts;
+    @OneToMany(mappedBy = "primaryOwner", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JsonBackReference
+    private Set<Account> accounts;
 
     private String username;
 

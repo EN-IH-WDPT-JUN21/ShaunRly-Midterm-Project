@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface IAccountService {
     Account updateSuper(Long id, List<? extends Account> Accounts);
-    String moneyTransfer(Account fromAccount, BigDecimal transferAmount, Long targetId, String name);
+    Account moneyTransfer(Account fromAccount, BigDecimal transferAmount, Long targetId, String name);
 }

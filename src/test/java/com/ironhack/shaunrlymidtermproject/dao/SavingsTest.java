@@ -109,9 +109,8 @@ class SavingsTest {
         System.out.println(savingsAcc.getInterestRate());
         System.out.println(currBalance2);
 
-        assertEquals(new Money(new BigDecimal("10000")
-                .add(new BigDecimal("100"))
-                .multiply(savings1.getInterestRate())).getAmount(),
-                currBalance2);
+        BigDecimal expected = new BigDecimal("10000").add(new BigDecimal("100")).multiply(savings1.getInterestRate());
+
+        assertEquals(expected, currBalance2);
     }
 }

@@ -30,24 +30,8 @@ public class AccountsController {
     @Autowired
     StudentCheckingRepository studentCheckingRepository;
 
-//    private Set<? extends JpaRepository> repositoryList = Set.of(
-//            creditCardRepository, studentCheckingRepository,
-//            checkingRepository, savingsRepository);
-//
+
 //    @GetMapping("/myaccounts")
 //    @ResponseStatus(HttpStatus.OK)
-//    public List<? extends Account> getAllUserAccounts(Principal principal){
-//        List<Account> returnedAccounts = new ArrayList<>();
-//        ArrayList<? extends Account> accountsList = (ArrayList<? extends Account>) checkingRepository.findAll();
-//        for (JpaRepository repository : repositoryList){
-//            List<? extends Account> accountList = repository.findAll();
-//            for (Account account : accountList){
-//                if(account.getPrimaryOwner().getUsername().equals(principal.getName())
-//                        || account.getSecondaryOwner().getUsername().equals(principal.getName())){
-//                    returnedAccounts.add(account);
-//                }
-//            }
-//        }
-//        return returnedAccounts;
-//    }
+
 }

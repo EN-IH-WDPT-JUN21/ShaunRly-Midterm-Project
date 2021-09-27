@@ -1,5 +1,9 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ironhack.shaunrlymidtermproject.enums.Status;
 import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
 import lombok.AllArgsConstructor;
@@ -7,26 +11,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-
+@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
 @Getter
 @Setter
 public class Savings extends Account{
 
 
-    //@Column(precision = 10, scale = 10, columnDefinition = "DECIMAL(10, 10)")
-    @Digits(integer = 10, fraction = 5)
+    @Column(name = "savings_interest_rate", columnDefinition = "DECIMAL(5,4)")
+    @Positive
     private BigDecimal interestRate = new BigDecimal("1.0025");
     @Convert(converter = MonetaryAmountConverter.class)
     private Money minimumBalance = new Money(new BigDecimal("1000"));
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("date_of_last_interest_payment")
     private LocalDate dateOfLastInterestPayment = LocalDate.now();
 
     public Savings(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {

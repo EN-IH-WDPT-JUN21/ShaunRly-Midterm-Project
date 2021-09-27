@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -65,22 +67,41 @@ public class AccountService implements IAccountService {
         return accounts.get(0);
     }
 
-    public String moneyTransfer(Account fromAccount, BigDecimal transferAmount, Long targetAccountId, String targetName){
+    public Account moneyTransfer(Account fromAccount, BigDecimal transferAmount, Long targetAccountId, String targetName){
         if(fromAccount.getBalance().getAmount().compareTo(transferAmount) == -1){
-            return "Balance of account below amount requested to transfer";
+            return null;
         }
         Optional<? extends Account> targetAccount = checkingRepository.findById(targetAccountId);
-        targetAccount = studentCheckingRepository.findById(targetAccountId);
-        targetAccount = savingsRepository.findById(targetAccountId);
-        targetAccount = checkingRepository.findById(targetAccountId);
+        if (targetAccount.isEmpty()){
+            targetAccount = studentCheckingRepository.findById(targetAccountId);
+        }
+        if (targetAccount.isEmpty()){
+            targetAccount = savingsRepository.findById(targetAccountId);
+        }
+        if (targetAccount.isEmpty()){
+            targetAccount = creditCardRepository.findById(targetAccountId);
+        }
 
-        if(targetAccount.isEmpty()
-                || !targetAccount.get().getPrimaryOwner().getName().equals(targetName)
-                || !targetAccount.get().getSecondaryOwner().getName().equals(targetName)){
-            return "That account couldn't be found.";
+        if(targetAccount.isEmpty()){
+            return null;
         }
         fromAccount.paymentOut(transferAmount);
         targetAccount.get().paymentIn(transferAmount);
-        return "Transfer Successful";
+        System.out.println(targetAccount.get().getBalance());
+        return targetAccount.get();
     }
+
+//    public List<? extends Account> getAllUserAccounts(Principal principal){
+//        ArrayList<Account> returnedAccounts = new ArrayList<>();
+//        for (JpaRepository repository : repositoryList){
+//            List<? extends Account> accountList = repository.findAll();
+//            for (Account account : accountList){
+//                if(account.getPrimaryOwner().getUsername().equals(principal.getName())
+//                        || account.getSecondaryOwner().getUsername().equals(principal.getName())){
+//                    returnedAccounts.add(account);
+//                }
+//            }
+//        }
+//        return returnedAccounts;
+//    }
 }

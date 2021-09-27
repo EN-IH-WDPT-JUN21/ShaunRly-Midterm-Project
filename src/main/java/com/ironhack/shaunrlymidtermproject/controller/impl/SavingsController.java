@@ -1,14 +1,16 @@
 package com.ironhack.shaunrlymidtermproject.controller.impl;
 
+import com.ironhack.shaunrlymidtermproject.controller.DTO.TransferDTO;
 import com.ironhack.shaunrlymidtermproject.controller.interfaces.ISavingsController;
 import com.ironhack.shaunrlymidtermproject.dao.Checking;
-import com.ironhack.shaunrlymidtermproject.dao.CreditCard;
 import com.ironhack.shaunrlymidtermproject.dao.Savings;
 import com.ironhack.shaunrlymidtermproject.repository.SavingsRepository;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.ISavingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,8 +50,10 @@ public class SavingsController implements ISavingsController {
 
     @GetMapping("/savings/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Savings getById(@PathVariable(name = "id") Long id, Principal principal){
-        if (savingsRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
+    public Savings getById(@PathVariable(name = "id") Long id){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (savingsRepository.findById(id).get().getPrimaryOwner().getUsername().equals(userDetails.getUsername())) {
             return savingsRepository.findById(id).orElse(null);
         } else {
             return null;
@@ -64,10 +68,15 @@ public class SavingsController implements ISavingsController {
 
     @PatchMapping("/savings/account/transfer/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String getById(@PathVariable(name = "id") Long id, Principal principal,
-                          @RequestBody BigDecimal transferAmount, @RequestBody Long targetId, @RequestBody String name){
-        if (savingsRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
-            return accountService.moneyTransfer(savingsRepository.findById(id).get(), transferAmount, targetId, name);
+    public Savings transfer(@PathVariable(name = "id") Long id,
+                             @RequestBody @Valid TransferDTO transferDTO){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (savingsRepository.findById(id).get().getPrimaryOwner().getUsername().equals(userDetails.getUsername())) {
+            Savings updatedTarget = (Savings) accountService.moneyTransfer(savingsRepository.findById(id).get(),
+                    transferDTO.getTransferAmount(), transferDTO.getTargetId(), transferDTO.getTargetName());
+            savingsRepository.save(updatedTarget);
+            return updatedTarget;
         } else {
             return null;
         }
