@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 public class CreditCardControllerTest {
+
     @Autowired
     WebApplicationContext webApplicationContext;
 
@@ -65,7 +66,7 @@ public class CreditCardControllerTest {
         creditCard1 = new CreditCard(new Money(new BigDecimal("1000")), accountHolder1, null);
         creditCardRepository.save(creditCard1);
 
-        User user = new User("user", "123456");
+        User user = new User("USER", "123456");
         userRepository.save(user);
     }
 

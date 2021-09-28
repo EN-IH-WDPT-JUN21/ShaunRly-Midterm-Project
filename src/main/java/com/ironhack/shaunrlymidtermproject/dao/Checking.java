@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ironhack.shaunrlymidtermproject.enums.Status;
 import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,11 +18,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
 @Getter
 @Setter
-public class Checking extends Account{
+public class Checking extends Account {
 
 
     private BigDecimal monthlyMaintenanceFee = new BigDecimal("12");
@@ -58,7 +57,7 @@ public class Checking extends Account{
     }
 
     @Override
-    public void paymentOut(BigDecimal amount){
+    public void paymentOut(BigDecimal amount) {
         fraudDetection(amount);
         if (getStatus() != Status.FROZEN) {
             getBalance().decreaseAmount(amount);
@@ -69,14 +68,14 @@ public class Checking extends Account{
         }
     }
 
-    public void dateCheck(){
-        if (LocalDate.now().isAfter(getDateOfLastMaintenancePayment().plusMonths(1))){
+    public void dateCheck() {
+        if (LocalDate.now().isAfter(getDateOfLastMaintenancePayment().plusMonths(1))) {
             setDateOfLastMaintenancePayment(LocalDate.now());
             makeMaintenancePayment();
         }
     }
 
-    public String makeMaintenancePayment(){
+    public String makeMaintenancePayment() {
         Money newBalance = new Money(getBalance().getAmount().subtract(monthlyMaintenanceFee));
         this.setBalance(newBalance);
         return "Monthly Maintenance Fee of " + getMonthlyMaintenanceFee() +

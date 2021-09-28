@@ -2,9 +2,6 @@ package com.ironhack.shaunrlymidtermproject.controller.impl;
 
 import com.ironhack.shaunrlymidtermproject.controller.DTO.TransferDTO;
 import com.ironhack.shaunrlymidtermproject.controller.interfaces.IStudentCheckingController;
-import com.ironhack.shaunrlymidtermproject.dao.Checking;
-import com.ironhack.shaunrlymidtermproject.dao.CreditCard;
-import com.ironhack.shaunrlymidtermproject.dao.Savings;
 import com.ironhack.shaunrlymidtermproject.dao.StudentChecking;
 import com.ironhack.shaunrlymidtermproject.repository.StudentCheckingRepository;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
@@ -16,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -34,25 +30,25 @@ public class StudentCheckingController implements IStudentCheckingController {
 
     @PostMapping("/student/new")
     @ResponseStatus(HttpStatus.OK)
-    public void newCreditCard(@RequestBody @Valid StudentChecking studentChecking){
+    public void newStudentChecking(@RequestBody @Valid StudentChecking studentChecking) {
         studentCheckingRepository.save(studentChecking);
     }
 
     @PutMapping("/student/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable(name = "id") Long id, @RequestBody @Valid StudentChecking studentChecking){
+    public void update(@PathVariable(name = "id") Long id, @RequestBody @Valid StudentChecking studentChecking) {
         studentCheckingService.update(id, studentChecking);
     }
 
     @GetMapping("/student/admin/getall")
     @ResponseStatus(HttpStatus.OK)
-    public List<StudentChecking> getAllSavingsAccounts(){
+    public List<StudentChecking> getAllStudentCheckingAccounts() {
         return studentCheckingRepository.findAll();
     }
 
     @GetMapping("/student/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public StudentChecking getById(@PathVariable(name = "id") Long id, Principal principal){
+    public StudentChecking getById(@PathVariable(name = "id") Long id, Principal principal) {
         if (studentCheckingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(principal.getName())) {
             return studentCheckingRepository.findById(id).orElse(null);
         } else {
@@ -62,14 +58,14 @@ public class StudentCheckingController implements IStudentCheckingController {
 
     @DeleteMapping("/student/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteById(@PathVariable(name = "id") Long id){
+    public void deleteById(@PathVariable(name = "id") Long id) {
         studentCheckingRepository.deleteById(id);
     }
 
     @PatchMapping("/student/account/transfer/{id}")
     @ResponseStatus(HttpStatus.OK)
     public StudentChecking transfer(@PathVariable(name = "id") Long id,
-                             @RequestBody @Valid TransferDTO transferDTO){
+                                    @RequestBody @Valid TransferDTO transferDTO) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         if (studentCheckingRepository.findById(id).get().getPrimaryOwner().getUsername().equals(userDetails.getUsername())) {

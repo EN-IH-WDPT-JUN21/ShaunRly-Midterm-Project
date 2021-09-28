@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -24,6 +22,7 @@ public class ThirdParty {
     private Long id;
 
     private String hashedKey;
+    private String username;
     private String name;
     @Convert(converter = MonetaryAmountConverter.class)
     private Money balance;
@@ -42,7 +41,7 @@ public class ThirdParty {
         getBalance().increaseAmount(amount);
     }
 
-    public void paymentOut(BigDecimal amount){
+    public void paymentOut(BigDecimal amount) {
         getBalance().decreaseAmount(amount);
     }
 }

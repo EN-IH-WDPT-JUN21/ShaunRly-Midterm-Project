@@ -62,8 +62,7 @@ public class SavingsControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         accountHolder1 = new AccountHolder("Scrooge McDuck", LocalDate.of(1956, 10, 24),
-                new Address(1, "McDuck Manor", "Duckburg", "New York", "USA", "DU12 CK3"));
-        accountHolder1.setUsername("USER");
+                new Address(1, "McDuck Manor", "Duckburg", "New York", "USA", "DU12 CK3"), "USER");
         accountHolderRepository.save(accountHolder1);
 
         savings1 = new Savings(new Money(new BigDecimal("1000")), accountHolder1, null);

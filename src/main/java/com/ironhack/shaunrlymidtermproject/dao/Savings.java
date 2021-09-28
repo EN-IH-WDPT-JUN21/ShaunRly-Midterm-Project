@@ -6,23 +6,21 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ironhack.shaunrlymidtermproject.enums.Status;
 import com.ironhack.shaunrlymidtermproject.utils.MonetaryAmountConverter;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
 @Getter
 @Setter
-public class Savings extends Account{
+public class Savings extends Account {
 
 
     @Column(name = "savings_interest_rate", columnDefinition = "DECIMAL(5,4)")
@@ -72,32 +70,33 @@ public class Savings extends Account{
 
     @Override
     public void setBalance(Money balance) {
-        dateCheck();
         super.setBalance(balance);
     }
 
     @Override
     public Money getBalance() {
-        dateCheck();
         return super.getBalance();
     }
 
-    public void dateCheck(){
-        if (LocalDate.now().isAfter(getDateOfLastInterestPayment().plusYears(1))){
+    public void dateCheck() {
+        if (LocalDate.now().isAfter(getDateOfLastInterestPayment().plusYears(1))) {
             setDateOfLastInterestPayment(LocalDate.now());
             accrueInterest();
         }
     }
 
-    public String accrueInterest(){
-        Money newBalance = new Money(getBalance().getAmount().multiply(interestRate));
-        BigDecimal interestPayment = newBalance.getAmount().subtract(this.getBalance().getAmount());
-        this.setBalance(newBalance);
-        return "Received Interest payment of " + interestPayment + ". Balance is now " + newBalance.getAmount();
+    public String accrueInterest() {
+        BigDecimal newBalance = getBalance().getAmount();
+        System.out.println(newBalance);
+        System.out.println(this.getInterestRate());
+        newBalance = newBalance.multiply(this.getInterestRate());
+        System.out.println(newBalance);
+        this.setBalance(new Money(newBalance));
+        return "Balance is now " + newBalance;
     }
 
     @Override
-    public void paymentOut(BigDecimal amount){
+    public void paymentOut(BigDecimal amount) {
         fraudDetection(amount);
         if (getStatus() != Status.FROZEN) {
             getBalance().decreaseAmount(amount);
@@ -110,10 +109,10 @@ public class Savings extends Account{
     }
 
     @Override
-    public void paymentIn(BigDecimal amount){
+    public void paymentIn(BigDecimal amount) {
         fraudDetection(amount);
         if (getStatus() != Status.FROZEN) {
-            getBalance().increaseAmount(amount);
+            setBalance(new Money(getBalance().getAmount().add(amount)));
             fraudDetection(amount);
             dateCheck();
         }

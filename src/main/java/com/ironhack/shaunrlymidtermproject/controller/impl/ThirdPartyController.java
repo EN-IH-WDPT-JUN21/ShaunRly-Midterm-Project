@@ -1,12 +1,12 @@
 package com.ironhack.shaunrlymidtermproject.controller.impl;
 
-import com.ironhack.shaunrlymidtermproject.dao.Checking;
 import com.ironhack.shaunrlymidtermproject.dao.ThirdParty;
 import com.ironhack.shaunrlymidtermproject.repository.ThirdPartyRepository;
-import com.ironhack.shaunrlymidtermproject.service.impl.ThirdPartyService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IThirdPartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +25,7 @@ public class ThirdPartyController {
 
     @PostMapping("/thirdparty/admin/new")
     @ResponseStatus(HttpStatus.OK)
-    public void newCheckingAccount(@RequestBody @Valid ThirdParty thirdParty){
+    public void newThirdPartyAccount(@RequestBody @Valid ThirdParty thirdParty) {
         thirdPartyRepository.save(thirdParty);
     }
 
@@ -37,14 +37,16 @@ public class ThirdPartyController {
 
     @GetMapping("/thirdparty/admin/getall")
     @ResponseStatus(HttpStatus.OK)
-    public List<ThirdParty> getAllCheckingAccounts(){
+    public List<ThirdParty> getAllThirdPartyAccounts() {
         return thirdPartyRepository.findAll();
     }
 
     @GetMapping("/thirdparty/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ThirdParty getById(@PathVariable(name = "id") Long id, Principal principal){
-        if (thirdPartyRepository.findById(id).get().getName().equals(principal.getName())) {
+    public ThirdParty getById(@PathVariable(name = "id") Long id) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (thirdPartyRepository.findById(id).get().getUsername().equals(userDetails.getUsername())) {
             return thirdPartyRepository.findById(id).orElse(null);
         } else {
             return null;
@@ -53,7 +55,7 @@ public class ThirdPartyController {
 
     @DeleteMapping("/thirdparty/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteById(@PathVariable(name = "id") Long id){
+    public void deleteById(@PathVariable(name = "id") Long id) {
         thirdPartyRepository.deleteById(id);
     }
 
@@ -61,7 +63,7 @@ public class ThirdPartyController {
     @ResponseStatus(HttpStatus.OK)
     public String getById(@PathVariable(name = "id") Long id, Principal principal,
                           @RequestBody String hashedKey, @RequestBody BigDecimal transferAmount,
-                          @RequestBody Long targetId, @RequestBody String secretKey){
+                          @RequestBody Long targetId, @RequestBody String secretKey) {
         if (thirdPartyRepository.findById(id).get().getName().equals(principal.getName())) {
             return thirdPartyService.moneyTransfer(thirdPartyRepository.findById(id).get(), hashedKey, transferAmount, targetId, secretKey);
         } else {

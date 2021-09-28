@@ -7,7 +7,7 @@ public class Hasher {
 
     public static PasswordEncoder pwdEnconder = new BCryptPasswordEncoder();
 
-    public static String hashGen(String key){
+    public static String hashGen(String key) {
         return pwdEnconder.encode(key);
     }
 }

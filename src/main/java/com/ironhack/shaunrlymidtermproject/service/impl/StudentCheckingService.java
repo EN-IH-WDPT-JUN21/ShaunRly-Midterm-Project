@@ -1,6 +1,5 @@
 package com.ironhack.shaunrlymidtermproject.service.impl;
 
-import com.ironhack.shaunrlymidtermproject.dao.Checking;
 import com.ironhack.shaunrlymidtermproject.dao.StudentChecking;
 import com.ironhack.shaunrlymidtermproject.repository.StudentCheckingRepository;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
@@ -22,14 +21,13 @@ public class StudentCheckingService implements IStudentCheckingService {
     @Autowired
     IAccountService accountService;
 
-    public void update(Long id, StudentChecking studentChecking){
+    public void update(Long id, StudentChecking studentChecking) {
 
         Optional<StudentChecking> storedStudentChecking = studentCheckingRepository.findById(id);
-        if (storedStudentChecking.isPresent()){
+        if (storedStudentChecking.isPresent()) {
             StudentChecking storedSuperUpdated = (StudentChecking) accountService.updateSuper(id, List.of(storedStudentChecking.get(), studentChecking));
             studentCheckingRepository.save(storedSuperUpdated);
-        }
-        else{
+        } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tha Student Checking Account does not exists");
         }
 

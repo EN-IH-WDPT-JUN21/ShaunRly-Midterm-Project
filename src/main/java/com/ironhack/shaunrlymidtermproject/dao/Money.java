@@ -1,22 +1,13 @@
 package com.ironhack.shaunrlymidtermproject.dao;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
-
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import java.io.Serializable;
-import java.math.RoundingMode;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Currency;
 
-public class Money implements Serializable {
+public class Money {
 
     private static final Currency USD = Currency.getInstance("USD");
-    private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_EVEN;
+    private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_DOWN;
 
     private final Currency currency;
     private BigDecimal amount;
@@ -48,7 +39,7 @@ public class Money implements Serializable {
         this(new BigDecimal("0"), USD, DEFAULT_ROUNDING);
     }
 
-    public Money(String amount){
+    public Money(String amount) {
         this.amount = new BigDecimal(amount);
         this.currency = USD;
     }

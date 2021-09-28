@@ -25,7 +25,7 @@ public class MonetaryAmountConverter implements AttributeConverter<Money, String
     @Override
     public Money convertToEntityAttribute(String s) {
         String[] pieces = s.split(SEPARATOR);
-        Money money = new Money(BigDecimal.valueOf(Double.parseDouble(pieces[1])), Currency.getInstance(pieces[0]));
+        Money money = new Money(new BigDecimal(pieces[1]), Currency.getInstance(pieces[0]));
         return money;
     }
 }

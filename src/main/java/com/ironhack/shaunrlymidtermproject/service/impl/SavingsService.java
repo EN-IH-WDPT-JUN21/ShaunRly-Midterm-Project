@@ -1,7 +1,6 @@
 package com.ironhack.shaunrlymidtermproject.service.impl;
 
 import com.ironhack.shaunrlymidtermproject.dao.Savings;
-import com.ironhack.shaunrlymidtermproject.dao.StudentChecking;
 import com.ironhack.shaunrlymidtermproject.repository.SavingsRepository;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IAccountService;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.ISavingsService;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class SavingsService implements ISavingsService{
+public class SavingsService implements ISavingsService {
 
     @Autowired
     SavingsRepository savingsRepository;
@@ -22,19 +21,19 @@ public class SavingsService implements ISavingsService{
     @Autowired
     IAccountService accountService;
 
-    public void update(Long id, Savings savings){
+    public void update(Long id, Savings savings) {
 
         Optional<Savings> storedSavings = savingsRepository.findById(id);
-        if (storedSavings.isPresent()){
+        if (storedSavings.isPresent()) {
             Savings storedSuperUpdated = (Savings) accountService.updateSuper(id, List.of(storedSavings.get(), savings));
-            if (savings.getMinimumBalance() != null){
+            if (savings.getMinimumBalance() != null) {
                 try {
                     storedSuperUpdated.setMinimumBalance(savings.getMinimumBalance());
-                } catch (Exception e){
+                } catch (Exception e) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Minimum Balance formatted incorrectly.");
                 }
             }
-            if (savings.getInterestRate() != null){
+            if (savings.getInterestRate() != null) {
                 try {
                     storedSuperUpdated.setInterestRate(savings.getInterestRate());
                 } catch (Exception e) {
@@ -42,8 +41,7 @@ public class SavingsService implements ISavingsService{
                 }
             }
             savingsRepository.save(storedSuperUpdated);
-        }
-        else{
+        } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tha Student Checking Account does not exists");
         }
 

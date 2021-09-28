@@ -36,4 +36,5 @@ public class User {
         this.password = password;
         this.roles = Set.of(new Role("USER", this));
     }
+
 }

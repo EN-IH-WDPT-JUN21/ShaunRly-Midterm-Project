@@ -18,9 +18,9 @@ public class SecurityController {
     @PostMapping("/newuser")
     @ResponseStatus(HttpStatus.OK)
     public String newUser(@RequestBody String username,
-                          @RequestBody String password){
-        for(User user : userRepository.findAll()){
-            if(user.getUsername().equals(username)){
+                          @RequestBody String password) {
+        for (User user : userRepository.findAll()) {
+            if (user.getUsername().equals(username)) {
                 return "That username is not available";
             }
         }

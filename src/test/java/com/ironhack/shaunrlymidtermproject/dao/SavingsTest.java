@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Currency;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -95,21 +97,19 @@ class SavingsTest {
 
     @Test
     void paymentIn_InterestApplied(){
+        RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_EVEN;
+        Currency USD = Currency.getInstance("USD");
         BigDecimal currBalance = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
         assertEquals(new Money(new BigDecimal("10000")).getAmount(), currBalance);
-
         Savings savingsAcc = savingsRepository.getById(savings1.getId());
-        System.out.println(savingsAcc.getInterestRate());
         savingsAcc.setDateOfLastInterestPayment(LocalDate.now().minusYears(1).minusDays(1));
         savingsAcc.paymentIn(new BigDecimal("100"));
         savingsRepository.save(savingsAcc);
 
         BigDecimal currBalance2 = savingsRepository.getById(savings1.getId()).getBalance().getAmount();
 
-        System.out.println(savingsAcc.getInterestRate());
-        System.out.println(currBalance2);
-
-        BigDecimal expected = new BigDecimal("10000").add(new BigDecimal("100")).multiply(savings1.getInterestRate());
+        BigDecimal expected = new BigDecimal("10000").add(new BigDecimal("100")).
+                multiply(savings1.getInterestRate()).setScale(USD.getDefaultFractionDigits(), DEFAULT_ROUNDING);
 
         assertEquals(expected, currBalance2);
     }

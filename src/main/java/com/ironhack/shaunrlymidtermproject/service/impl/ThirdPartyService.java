@@ -5,7 +5,6 @@ import com.ironhack.shaunrlymidtermproject.dao.ThirdParty;
 import com.ironhack.shaunrlymidtermproject.repository.*;
 import com.ironhack.shaunrlymidtermproject.service.interfaces.IThirdPartyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,36 +29,37 @@ public class ThirdPartyService implements IThirdPartyService {
     StudentCheckingRepository studentCheckingRepository;
 
     @Override
-    public void update(Long id, ThirdParty thirdParty) throws Exception{
+    public void update(Long id, ThirdParty thirdParty) throws Exception {
         Optional<ThirdParty> foundThirdParty = thirdPartyRepository.findById(id);
-        if(foundThirdParty.isEmpty()){
+        if (foundThirdParty.isEmpty()) {
             throw new AccountNotFoundException("No Third Party Account with that ID");
         }
-        if (thirdParty.getBalance() != null){
+        if (thirdParty.getBalance() != null) {
             try {
                 foundThirdParty.get().setBalance(thirdParty.getBalance());
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Balance Formatted Incorrectly");
             }
         }
-        if (thirdParty.getName() != null){
+        if (thirdParty.getName() != null) {
             try {
                 foundThirdParty.get().setName(thirdParty.getName());
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name Formatted Incorrectly");
             }
         }
-        if (thirdParty.getHashedKey() != null){
+        if (thirdParty.getHashedKey() != null) {
             try {
                 foundThirdParty.get().setHashedKey(thirdParty.getHashedKey());
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Key Formatted Incorrectly");
             }
         }
+        thirdPartyRepository.save(foundThirdParty.get());
     }
 
     public String moneyTransfer(ThirdParty thirdParty, String hashedKey, BigDecimal transferAmount, Long targetId, String secretKey) {
-        if(thirdParty.getBalance().getAmount().compareTo(transferAmount) == -1){
+        if (thirdParty.getBalance().getAmount().compareTo(transferAmount) == -1) {
             return "Balance of account below amount requested to transfer";
         }
         Optional<? extends Account> targetAccount = checkingRepository.findById(targetId);
@@ -67,7 +67,7 @@ public class ThirdPartyService implements IThirdPartyService {
         targetAccount = savingsRepository.findById(targetId);
         targetAccount = checkingRepository.findById(targetId);
 
-        if(targetAccount.isEmpty() || !targetAccount.get().getSecretKey().equals(secretKey)){
+        if (targetAccount.isEmpty() || !targetAccount.get().getSecretKey().equals(secretKey)) {
             return "That account couldn't be found.";
         }
         thirdParty.paymentOut(transferAmount);

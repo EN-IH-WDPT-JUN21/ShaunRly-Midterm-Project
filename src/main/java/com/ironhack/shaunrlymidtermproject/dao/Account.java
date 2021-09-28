@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -56,14 +55,14 @@ public abstract class Account {
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
-        if(secondaryOwner == null){
+        if (secondaryOwner == null) {
             this.secondaryOwner = primaryOwner;
         } else {
             this.secondaryOwner = secondaryOwner;
         }
     }
 
-    private String secretKeyGen(){
+    private String secretKeyGen() {
         int leftLimit = 48; // numeral '0'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 6;
@@ -94,7 +93,7 @@ public abstract class Account {
         this.balance = balance;
     }
 
-    public void paymentIn(BigDecimal amount){
+    public void paymentIn(BigDecimal amount) {
         fraudDetection(amount);
         if (status != Status.FROZEN) {
             balance.increaseAmount(amount);
@@ -102,37 +101,36 @@ public abstract class Account {
         fraudDetection(amount);
     }
 
-    public void paymentOut(BigDecimal amount){
+    public void paymentOut(BigDecimal amount) {
         fraudDetection(amount);
         if (status != Status.FROZEN) {
             balance.decreaseAmount(amount);
         }
     }
 
-    public static Account createChecking(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner){
-        if (Period.between(primaryOwner.getDateOfBirth(), LocalDate.now()).getYears() >= 24){
+    public static Account createChecking(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+        if (Period.between(primaryOwner.getDateOfBirth(), LocalDate.now()).getYears() >= 24) {
             return new Checking(balance, primaryOwner, secondaryOwner);
         } else {
             return new StudentChecking(balance, primaryOwner, secondaryOwner);
         }
     }
 
-    public String fraudDetection(BigDecimal transactionAmount){
-        if(getLastTransactionDate().plusSeconds(2).compareTo(LocalDateTime.now()) != 1){
+    public String fraudDetection(BigDecimal transactionAmount) {
+        if (getLastTransactionDate().plusSeconds(2).compareTo(LocalDateTime.now()) != 1) {
             setStatus(Status.FROZEN);
             return "Fraud Detected: Too Many Transactions in short time";
         } else {
             setLastTransactionDate(LocalDateTime.now());
         }
-        if (getLastTransactionDate().getDayOfYear() == LocalDate.now().getDayOfYear()){
+        if (getLastTransactionDate().getDayOfYear() == LocalDate.now().getDayOfYear()) {
             currentDayTransactionTotal = currentDayTransactionTotal.add(transactionAmount);
-            if (currentDayTransactionTotal.compareTo(highestDailyTotal.multiply(new BigDecimal("1.5"))) != -1){
+            if (currentDayTransactionTotal.compareTo(highestDailyTotal.multiply(new BigDecimal("1.5"))) != -1) {
                 setStatus(Status.FROZEN);
                 return "Fraud Detected: Current daily transactions have exceeded Limit";
             }
-        }
-        else {
-            if (currentDayTransactionTotal.compareTo(highestDailyTotal) == 1){
+        } else {
+            if (currentDayTransactionTotal.compareTo(highestDailyTotal) == 1) {
                 highestDailyTotal = currentDayTransactionTotal;
                 currentDayTransactionTotal = new BigDecimal("0");
                 setLastTransactionDate(LocalDateTime.now());

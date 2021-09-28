@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ironhack.shaunrlymidtermproject.enums.Status;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,12 +16,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
 @Getter
 @Setter
-public class CreditCard extends Account{
-
+public class CreditCard extends Account {
 
 
     private BigDecimal creditLimit = new BigDecimal("100");
@@ -61,7 +59,7 @@ public class CreditCard extends Account{
     }
 
     public void setCreditLimit(BigDecimal creditLimit) {
-        if (creditLimit.compareTo(new BigDecimal("100000")) == 1){
+        if (creditLimit.compareTo(new BigDecimal("100000")) == 1) {
             this.creditLimit = new BigDecimal("100000");
         } else {
             this.creditLimit = creditLimit;
@@ -69,7 +67,7 @@ public class CreditCard extends Account{
     }
 
     public void setInterestRate(BigDecimal interestRate) {
-        if (interestRate.compareTo(new BigDecimal("1.1")) == -1){
+        if (interestRate.compareTo(new BigDecimal("1.1")) == -1) {
             this.interestRate = new BigDecimal("1.1");
         } else {
             this.interestRate = interestRate;
@@ -82,14 +80,14 @@ public class CreditCard extends Account{
         return super.getBalance();
     }
 
-    public void dateCheck(){
-        if (LocalDate.now().isAfter(getDateOfLastInterestPayment().plusMonths(1))){
+    public void dateCheck() {
+        if (LocalDate.now().isAfter(getDateOfLastInterestPayment().plusMonths(1))) {
             setDateOfLastInterestPayment(LocalDate.now());
             accrueInterest();
         }
     }
 
-    public String accrueInterest(){
+    public String accrueInterest() {
         Money newBalance = new Money(getBalance().getAmount().multiply(interestRate));
         BigDecimal interestPayment = newBalance.getAmount().subtract(this.getBalance().getAmount());
         this.setBalance(newBalance);
@@ -102,11 +100,11 @@ public class CreditCard extends Account{
     }
 
     @Override
-    public void paymentOut(BigDecimal amount){
+    public void paymentOut(BigDecimal amount) {
         creditCardPurchase(amount);
     }
 
-    public String creditPayment(BigDecimal amount){
+    public String creditPayment(BigDecimal amount) {
         String fraudMessage = fraudDetection(amount);
         if (getStatus() != Status.FROZEN) {
             getBalance().decreaseAmount(amount);

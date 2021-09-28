@@ -21,13 +21,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private CustomUserDetailsService customUserDetailsService;
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder);
     }
@@ -39,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .mvcMatchers(HttpMethod.POST, "/*/new").hasAnyRole("ADMIN")
                 .mvcMatchers(HttpMethod.GET, "/*/admin/getall").hasAnyRole("ADMIN")
-                .mvcMatchers(HttpMethod.GET, "/*/account/*").hasAnyRole("ADMIN","USER")
+                .mvcMatchers(HttpMethod.GET, "/*/account/*").hasAnyRole("ADMIN", "USER")
                 .mvcMatchers(HttpMethod.PUT, "/*/admin/*").hasAnyRole("ADMIN")
                 .mvcMatchers(HttpMethod.DELETE, "/*/admin/*").hasAnyRole("ADMIN");
     }
