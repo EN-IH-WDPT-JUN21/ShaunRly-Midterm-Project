@@ -149,6 +149,9 @@ public abstract class Account {
                 ", secondaryOwner=" + secondaryOwner +
                 ", penaltyFee=" + penaltyFee +
                 ", creationDate=" + creationDate +
+                ", lastTransactionDate=" + lastTransactionDate +
+                ", currentDayTransactionTotal=" + currentDayTransactionTotal +
+                ", highestDailyTotal=" + highestDailyTotal +
                 ", status=" + status +
                 '}';
     }
