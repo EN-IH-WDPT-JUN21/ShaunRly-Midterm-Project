@@ -1,9 +1,8 @@
 
-#Restful Banking
+# Restful Banking
 Ironhack Bootcamp Midterm Project
 by Shaun Reilly
 
-[TOC]
 
 ### Project Spec
 
